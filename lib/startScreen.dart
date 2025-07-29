@@ -2,44 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'searchScreen.dart';
+import 'collectionScreen.dart';
 
 
-Future<CardDeck> fetchCardById(String setCode, String number) async {
-  final url = 'https://api.swu-db.com/cards/$setCode/$number';
-  final response = await http.get(Uri.parse(url));
 
-  if (response.statusCode != 200) {
-    throw Exception('Serverfehler: ${response.statusCode}');
-  }
-
-  final Map<String, dynamic> json = jsonDecode(response.body);
-  return CardDeck.fromJson(json);
-}
-
-class CardDeck{
-
-  final String cardId;
-  final String name;
-  final String image;
-
-  const CardDeck({required this.cardId, required this.name, required this.image});
-
-  factory CardDeck.fromJson(Map<String, dynamic> json) {
-    // Kombiniere Set und Number zu einer ID
-    final id = "${json['Set']}-${json['Number']}";
-    // Setze Name und Subtitle zusammen
-    final fullName = json['Subtitle'] != null
-        ? "${json['Name']} – ${json['Subtitle']}"
-        : json['Name'];
-
-    return CardDeck(
-      cardId: id,
-      name: fullName,
-      image: json['FrontArt'],      // genau wie im JSON
-    );
-  }
-  
-}
 
 void main() => runApp(const MyApp());
 
@@ -52,20 +18,19 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   int _selectedIndex = 0;
-  late Future<CardDeck> futureCardDeck;
   late final List<Widget> _screens;
 
 
   @override
   void initState() {
     super.initState();
-    futureCardDeck = fetchCardById('TWI','148');
     _screens = [
       _buildCardScreen(),         // Der Hauptbildschirm
-       SearchScreen(),       // Dein zweiter Screen
-      const Center(child: Text('Collection')), // Placeholder für dritten Screen
+      SearchScreen(),       // Dein zweiter Screen
+      CollectionScreen(), // Placeholder für dritten Screen
     ];
   }
+
   //methode um aktuellen Screen auf der NavBar zu zeigen
   void _onItemTapped(int index) {
     setState(() {
@@ -75,41 +40,53 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+
+  //shows one Card on the Screen
   Widget _buildCardScreen(){
-    return Center(
-      child: FutureBuilder<CardDeck>(
-        future: futureCardDeck,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text('Fehler: ${snapshot.error}');
-          } else if (snapshot.hasData) {
-            final card = snapshot.data!;
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.network(card.image, height: 500),
-                const SizedBox(height: 16),
-                Text(card.name, style: const TextStyle(fontSize: 20)),
-                Text("ID: ${card.cardId}"),
-              ],
-            );
-          } else {
-            return const Text('Karte nicht gefunden.');
-          }
-        },
-      ),
+    return Padding(padding: const EdgeInsets.all(12.0),
+        child: Column(
+          children: [
+          Align(
+          alignment: Alignment.centerLeft,
+          child: ElevatedButton(
+            style: raisedButtonStyle,
+            onPressed: () {
+              // Aktion hier
+            },
+            child: const Text('Add Deck'),
+          ),
+        ),
+            const SizedBox(height: 12),
+          ],
+        ),
     );
   }
+
+
+  final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+    foregroundColor: Colors.black,
+    backgroundColor: Colors.deepPurpleAccent,
+    minimumSize: Size(58, 36),
+    padding: EdgeInsets.symmetric(horizontal: 8),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(2)),
+    ),
+  );
 
   @override
   Widget build(BuildContext context)  {
     return MaterialApp(
       title: 'Karte anzeigen',
       home: Scaffold(
-        appBar: AppBar(title: const Text('Karte(n) anzeigen')),
-          body: _screens[_selectedIndex],
+        appBar: AppBar(title: const Text('SWU Cardfinder Pro Delux ++')),
+          body: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: _screens[_selectedIndex],
+              ),
+            ],
+          ),
           bottomNavigationBar: BottomNavigationBar(
             items: const<BottomNavigationBarItem>[
               BottomNavigationBarItem(
@@ -128,7 +105,7 @@ class _MyAppState extends State<MyApp> {
             currentIndex: _selectedIndex,
             selectedItemColor: Colors.red[800],
             onTap: _onItemTapped,
-          ),//NavBar unten im Screen
+          ), //NavBar unten im Screen
       ),
     );
   }
