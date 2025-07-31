@@ -1,114 +1,107 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'searchScreen.dart';
 import 'collectionScreen.dart';
-
-
-
+import 'deckBuilderScreen.dart';
+import 'buttonstyle.dart';
 
 void main() => runApp(const MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Karte anzeigen',
+      home: const MainScreen(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
-  int _selectedIndex = 0;
-  late final List<Widget> _screens;
-
+class MainScreen extends StatefulWidget {
+  const MainScreen({super.key});
 
   @override
-  void initState() {
-    super.initState();
-    _screens = [
-      _buildCardScreen(),         // Der Hauptbildschirm
-      SearchScreen(),       // Dein zweiter Screen
-      CollectionScreen(), // Placeholder für dritten Screen
-    ];
-  }
+  State<MainScreen> createState() => _MainScreenState();
+}
 
-  //methode um aktuellen Screen auf der NavBar zu zeigen
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
   void _onItemTapped(int index) {
     setState(() {
-      if(_selectedIndex > 2 || _selectedIndex < 0)
-      {_selectedIndex = 0;}
       _selectedIndex = index;
     });
   }
 
+  List<Widget> _buildScreens(BuildContext context) {
+    return [
+      _buildCardScreen(context),
+      SearchScreen(),
+      CollectionScreen(),
+      deckBuilderScreen(),
+    ];
+  }
 
-  //shows one Card on the Screen
-  Widget _buildCardScreen(){
-    return Padding(padding: const EdgeInsets.all(12.0),
-        child: Column(
-          children: [
+  Widget _buildCardScreen(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
+        children: [
           Align(
-          alignment: Alignment.centerLeft,
-          child: ElevatedButton(
-            style: raisedButtonStyle,
-            onPressed: () {
-              // Aktion hier
-            },
-            child: const Text('Add Deck'),
+            alignment: Alignment.centerLeft,
+            child: ElevatedButton(
+              style: raisedButtonStyle,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => deckBuilderScreen()),
+                );
+              },
+              child: const Text('Add Deck'),
+            ),
           ),
-        ),
-            const SizedBox(height: 12),
-          ],
-        ),
+          const SizedBox(height: 12),
+        ],
+      ),
     );
   }
 
-
-  final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-    foregroundColor: Colors.black,
-    backgroundColor: Colors.deepPurpleAccent,
-    minimumSize: Size(58, 36),
-    padding: EdgeInsets.symmetric(horizontal: 8),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(2)),
-    ),
-  );
-
   @override
-  Widget build(BuildContext context)  {
-    return MaterialApp(
-      title: 'Karte anzeigen',
-      home: Scaffold(
-        appBar: AppBar(title: const Text('SWU Cardfinder Pro Delux ++')),
-          body: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: _screens[_selectedIndex],
-              ),
-            ],
+  Widget build(BuildContext context) {
+    final screens = _buildScreens(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('SWU Cardfinder Pro Delux ++'),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: screens[_selectedIndex],
           ),
-          bottomNavigationBar: BottomNavigationBar(
-            items: const<BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home_filled),
-                label: 'Decks',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                label: 'Search for Cards',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.favorite),
-                label: 'Collection',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            selectedItemColor: Colors.red[800],
-            onTap: _onItemTapped,
-          ), //NavBar unten im Screen
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_filled),
+            label: 'Decks',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Search for Cards',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Collection',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.red[800],
+        onTap: _onItemTapped,
       ),
     );
   }
 }
-
-

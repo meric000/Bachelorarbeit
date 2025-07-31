@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:showing_card/searchScreen.dart';
+import 'buttonstyle.dart';
 
 Future<CardDeck> fetchCardById(String setCode, String number) async {
   final url = 'https://api.swu-db.com/cards/$setCode/$number';
@@ -45,45 +45,29 @@ class CardDeck {
 }
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MaterialApp(
+    title: 'SWU Cardfinder',
+    home: CollectionScreen(), // oder Scaffold mit BottomNav
+  )
+  );
 }
 
-class _MyApp extends StatelessWidget {
-  const _MyApp({Key? key}) : super(key: key);
-
-  // This is the root widget
-  // of your application
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'This is your Cards',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: SearchScreen(),
-    );
-  }
-}
 
 class CollectionScreen extends StatefulWidget {
+  const CollectionScreen({super.key});
+
   @override
   State<CollectionScreen> createState() => _CollectionScreenState();
 }
 
 class _CollectionScreenState extends State<CollectionScreen> {
+
   late Future<CardDeck> futureCardDeck;
 
-  final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
-    foregroundColor: Colors.black,
-    backgroundColor: Colors.deepPurpleAccent,
-    minimumSize: Size(58, 36),
-    padding: EdgeInsets.symmetric(horizontal: 8),
-    shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.all(Radius.circular(2)),
-    ),
-  );
 
   @override
   Widget build(BuildContext context) {
-    futureCardDeck = fetchCardById('TWI', '146');
+    futureCardDeck = fetchCardById('TWI', '147');
     return Center(
       child: FutureBuilder<CardDeck>(
         future: futureCardDeck,
@@ -97,22 +81,26 @@ class _CollectionScreenState extends State<CollectionScreen> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: ElevatedButton(
-                    style: raisedButtonStyle,
-                    onPressed: () {
-                      // Aktion hier
-                    },
-                    child: const Text('Add Card to Collection'),
+                Image.network(card.image, height: 160),
+                const SizedBox(height: 16),
+                Text(card.name, style: const TextStyle(fontSize: 10)),
+                Text("ID: ${card.cardId}"),
+                Expanded(
+                  child:
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ElevatedButton(
+                      style: raisedButtonStyle,
+                      onPressed: () {
+                        // Aktion hier
+                      },
+                      child: const Text('Add Card to Collection'),
+                    ),
                   ),
                 ),
 
-                Image.network(card.image, height: 580),
-                const SizedBox(height: 16),
-                Text(card.name, style: const TextStyle(fontSize: 20)),
-                Text("ID: ${card.cardId}"),
               ],
+
             );
           } else {
             return const Center(child: Text('Karte nicht gefunden.'));
@@ -121,4 +109,6 @@ class _CollectionScreenState extends State<CollectionScreen> {
       ),
     );
   }
+
+
 }
