@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:showing_card/searchScreen.dart';
+
 import 'buttonstyle.dart';
 
 Future<CardDeck> fetchCardById(String setCode, String number) async {
@@ -81,8 +83,22 @@ class _CollectionScreenState extends State<CollectionScreen> {
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.network(card.image, height: 160),
-                const SizedBox(height: 16),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => FullscreenImagePage(imageUrl: card.image),
+                      ),
+                    );
+                  },
+                  child: Hero(
+                    tag: card.image,
+                    child: Image.network(card.image, height: 160, fit: BoxFit.cover),
+                  ),
+                ),
+                //Abstand zwischen karte und Text
+                const SizedBox(height: 10),
                 Text(card.name, style: const TextStyle(fontSize: 10)),
                 Text("ID: ${card.cardId}"),
                 Expanded(
@@ -92,7 +108,8 @@ class _CollectionScreenState extends State<CollectionScreen> {
                     child: ElevatedButton(
                       style: raisedButtonStyle,
                       onPressed: () {
-                        // Aktion hier
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => SearchScreen()));
                       },
                       child: const Text('Add Card to Collection'),
                     ),
@@ -109,6 +126,27 @@ class _CollectionScreenState extends State<CollectionScreen> {
       ),
     );
   }
+}
+class FullscreenImagePage extends StatelessWidget {
+  final String imageUrl;
 
+  const FullscreenImagePage({super.key, required this.imageUrl});
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: GestureDetector(
+        onTap: () => Navigator.pop(context),
+        child: Column(
+          children: [
+            Hero(
+            tag: imageUrl,
+            child: Image.network(imageUrl, fit: BoxFit.contain),
+          ), const Text('Tap on Card to return', style: TextStyle(color:Colors.white),),
+          ],
+        ),
+      ),
+    );
+  }
 }

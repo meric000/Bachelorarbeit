@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:showing_card/searchScreen.dart';
 import 'buttonstyle.dart';
 
 void main() {}
 
-class deckBuilderScreen extends StatefulWidget {
+class DeckBuilderScreen extends StatefulWidget {
   @override
-  State<deckBuilderScreen> createState() => _deckBuilderState();
+  State<DeckBuilderScreen> createState() => _DeckBuilderState();
 }
 
-class _deckBuilderState extends State<deckBuilderScreen> {
+class _DeckBuilderState extends State<DeckBuilderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Deck Builder'),
+        title: const Text('Deck Builder'), backgroundColor: Colors.yellow,
       ),
       backgroundColor: Colors.white, // Hier explizit der weiße Hintergrund
       body: Padding(
@@ -25,7 +26,10 @@ class _deckBuilderState extends State<deckBuilderScreen> {
               child: ElevatedButton(
                 style: raisedButtonStyle,
                 onPressed: () {
-                  // TODO: Karte hinzufügen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SearchScreen()),
+                  );
                 },
                 child: const Text('Add Card'),
               ),

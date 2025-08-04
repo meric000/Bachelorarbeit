@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
-import 'searchScreen.dart';
+
+import 'buttonstyle.dart';
 import 'collectionScreen.dart';
 import 'deckBuilderScreen.dart';
-import 'buttonstyle.dart';
+import 'searchScreen.dart';
+import 'DeckStatsScreen.dart';
 
 void main() => runApp(const MyApp());
 
+const String deckname = "Deckname Placeholder";
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +44,7 @@ class _MainScreenState extends State<MainScreen> {
       _buildCardScreen(context),
       SearchScreen(),
       CollectionScreen(),
-      deckBuilderScreen(),
+      DeckBuilderScreen(),
     ];
   }
 
@@ -55,12 +60,36 @@ class _MainScreenState extends State<MainScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => deckBuilderScreen()),
+                  MaterialPageRoute(builder: (context) => DeckBuilderScreen()),
                 );
               },
               child: const Text('Add Deck'),
             ),
           ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => DeckStatsScreen(),
+              ),
+            );},
+            child: Container(
+              color: Colors.grey,
+              width: 380.0,
+              height: 80.0,
+              alignment: Alignment.center,
+              child: Text(deckname,
+                  style: Theme
+                      .of(context)
+                      .textTheme
+                      .headlineMedium!
+                      .copyWith(color: Colors.white)),
+
+            ),
+          ),
+
+          const Spacer(),
           const SizedBox(height: 12),
         ],
       ),
@@ -70,14 +99,15 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final screens = _buildScreens(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('SWU Cardfinder Pro Delux ++'),
+        backgroundColor: Colors.redAccent,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 16),
           Expanded(
             child: screens[_selectedIndex],
           ),
