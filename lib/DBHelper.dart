@@ -29,7 +29,10 @@ Future<List<StarWarsUnlimitedCard>> fetchbyName(String name) async {
 /**
  * fetches a Card from the swu-DB matching the ID (Setcode+Number)
  */
-Future<StarWarsUnlimitedCard> fetchCardById(String setCode, String number,) async {
+Future<StarWarsUnlimitedCard> fetchCardById(
+  String setCode,
+  String number,
+) async {
   final url = 'https://api.swu-db.com/cards/$setCode/$number';
   final response = await http.get(Uri.parse(url));
 
@@ -64,7 +67,9 @@ Future<List<StarWarsUnlimitedCard>> fetchCardsFromTF(String input) async {
 /**
  * crates a swu-card from a Json body and adds them into a list to display them
  */
-Future<List<StarWarsUnlimitedCard>> createSWUCardListFromJson(List<dynamic> sCardsList,) async {
+Future<List<StarWarsUnlimitedCard>> createSWUCardListFromJson(
+  List<dynamic> sCardsList,
+) async {
   List<StarWarsUnlimitedCard> cardList = [];
 
   for (int i = 0; i < sCardsList.length; i++) {
@@ -85,12 +90,20 @@ Future<List<StarWarsUnlimitedCard>> createSWUCardListFromJson(List<dynamic> sCar
     final bool unique = sCardsList[i]['Unique'] as bool;
     final artist = "${sCardsList[i]['Artist']}";
     final variantType = "${sCardsList[i]['VariantType']}";
-    final marketPrice = double.tryParse(sCardsList[i]['MarketPrice'].toString()) ?? 0.0;
-    final foilPrice = double.tryParse(sCardsList[i]['FoilPrice'].toString()) ?? 0.0;
+    final marketPrice =
+        double.tryParse(sCardsList[i]['MarketPrice'].toString()) ?? 0.0;
+    final foilPrice =
+        double.tryParse(sCardsList[i]['FoilPrice'].toString()) ?? 0.0;
     final arena = "${sCardsList[i]['Arenas']}";
     final type = "${sCardsList[i]['Type']}";
-    final aspects = (sCardsList[i]['Aspects'] as List?)?.map((e) => e.toString()).toList() ?? [];
-    final traits  = (sCardsList[i]['Traits'] as List?)?.map((e) => e.toString()).toList() ?? [];
+    final aspects =
+        (sCardsList[i]['Aspects'] as List?)
+            ?.map((e) => e.toString())
+            .toList() ??
+        [];
+    final traits =
+        (sCardsList[i]['Traits'] as List?)?.map((e) => e.toString()).toList() ??
+        [];
     String backArt = "This Card has no Back";
     String backText = "";
     if (doubleSided) {
@@ -99,7 +112,10 @@ Future<List<StarWarsUnlimitedCard>> createSWUCardListFromJson(List<dynamic> sCar
     }
 
     cardList.add(
-      StarWarsUnlimitedCard(cardId: id, name: name, image: imageUrl,
+      StarWarsUnlimitedCard(
+        cardId: id,
+        name: name,
+        image: imageUrl,
         cost: cost,
         power: power,
         hp: hp,
@@ -114,7 +130,8 @@ Future<List<StarWarsUnlimitedCard>> createSWUCardListFromJson(List<dynamic> sCar
         aspects: aspects,
         traits: traits,
         backArt: backArt,
-        backtext: backText,),
+        backtext: backText,
+      ),
     );
   }
 

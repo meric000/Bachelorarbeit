@@ -62,8 +62,14 @@ class StarWarsUnlimitedCard {
     final foilPrice = double.tryParse(json['FoilPrice'].toString()) ?? 0.0;
     final arena = "${json['Arenas']}";
     final type = "${json['Type']}";
-    final aspects = (json['Aspects'] as List<dynamic>).cast<String>();
-    final traits = (json['Traits'] as List<dynamic>).cast<String>();
+    final aspects =
+        (json['Aspects'] as List?)
+            ?.map((e) => e.toString())
+            .toList() ??
+            [];
+    final traits =
+        (json['Traits'] as List?)?.map((e) => e.toString()).toList() ??
+            [];
      String backArt = "";
      String backText = "";
     if (doubleSided) {
