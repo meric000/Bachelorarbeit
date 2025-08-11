@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
+import 'DBHelper.dart';
+import 'StarwarsUnlimitedCard.dart';
+import 'collectionScreen.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -25,101 +30,141 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  Future<List<StarWarsUnlimitedCard>>? futureCards;
+
+
+  late SearchController _searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController = SearchController();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Search for Cards:"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              // method to show the search bar
-              showSearch(
-                context: context,
-                // delegate to customize the search bar
-                delegate: CustomSearchDelegate(),
+      appBar: AppBar(title: const Text("Search for Cards:"),),
+      body: Padding(padding: const EdgeInsets.all(8.0),
+        child: SearchAnchor(
+            searchController: _searchController,
+            builder: (BuildContext context, SearchController controller) {
+              return Column(mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SearchBar(
+                    controller: controller,
+                    padding: const WidgetStatePropertyAll<EdgeInsets>(
+                      EdgeInsets.symmetric(horizontal: 16.0),
+                    ),
+                    onTap: () {},
+                    onChanged: (_) {},
+                    onSubmitted: (value) async {
+                      // Tastatur schließen
+                      FocusScope.of(context).unfocus();
+                      List<StarWarsUnlimitedCard> CardList = await fetchbyName(
+                          value);
+
+                      setState(() {
+                        futureCards = Future.value(CardList);
+                      });
+                    },
+                  ),
+                  if (futureCards != null)
+                    FutureBuilder<List<StarWarsUnlimitedCard>>(
+                      future: futureCards,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text('Fehler: ${snapshot.error}');
+                        } else if (snapshot.hasData) {
+                          final cards = snapshot.data!;
+                          return Expanded(child: GridView.builder(
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2, // number of items in each row
+                              mainAxisSpacing: 9.0, // spacing between rows
+                              crossAxisSpacing: 5.0, // spacing between columns
+                            ),
+                            padding: EdgeInsets.all(9.0),
+                            // padding around the grid
+                            itemCount: cards.length,
+                            // total number of items
+                            itemBuilder: (context, index) {
+                              final swuCard = cards[index];
+                              return Column(
+                                children: [GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            FullscreenImagePage(
+                                                imageUrl: swuCard.image),
+                                      ),
+                                    );
+                                  },
+                                  child: Hero(
+                                    tag: swuCard.image,
+                                    child: Image.network(
+                                      swuCard.image, height: 120,
+                                    ),
+                                  ),
+                                ),
+                                  const SizedBox(height: 9),
+                                  Text(swuCard.name,
+                                      style: const TextStyle(fontSize: 10)),
+                                  Text("ID: ${swuCard.cardId}"),
+                                ],
+                              );
+                            },
+                          )
+                          );
+                        } else {
+                          return const Text('Karte nicht gefunden.');
+                        }
+                      },
+                    ),
+                ],
               );
             },
-            icon: const Icon(Icons.search,size: 30,),
-          ),
-        ],
-      ),
+
+            suggestionsBuilder: (BuildContext context,
+                SearchController controller) {
+              final List<String> searchTerms = [];
+              final query = controller.text;
+              final List<String> filtered = searchTerms.where((term) =>
+                  term.toLowerCase().contains(query.toLowerCase())
+              ).toList();
+
+              return List<Widget>.generate(filtered.length, (int index) {
+                final result = filtered[index];
+                return ListTile(
+                  title: Text(result),
+                  onTap: () async {
+                    controller.closeView(result);
+                    FocusScope.of(context).unfocus();
+                    final card = await fetchCardIDFromTextfield(result);
+                    setState(() {
+                      futureCards = Future.value(
+                          card as FutureOr<List<StarWarsUnlimitedCard>>?);
+                    });
+                    // setzt den Text und schließt das Suggestion Panel
+                    // Optional: etwas mit result machen
+                  },
+                );
+              });
+            }
+        ),),
     );
   }
 }
 
-class CustomSearchDelegate extends SearchDelegate {
-  List<String> searchTerms = [
-    "Anakin Skywalker",
-    "Ahsoka",
-    "Darth Vader",
-    "Obi-Wan-Kenobi",
-    "Darth Sidious",
-    "Boba Fett",
-    "Luke Skywalker",
-    "Chewbacca",
-    "Han Solo",
-    "Princess Lea",
-    "Jar Jar Bings",
-    "Yoda",
-    "Darth Maul",
-    "Captain Rex",
-  ];
 
-  //Clears the Search text from the Searchbar
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        onPressed: () {
-          query = '';
-        },
-        icon: Icon(Icons.clear),
-      ),
-    ];
-  }
 
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        close(context, null);
-      },
-      icon: Icon(Icons.arrow_back),
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var SWCharacters in searchTerms) {
-      if (SWCharacters.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(SWCharacters);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(title: Text(result));
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-    for (var fruit in searchTerms) {
-      if (fruit.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(fruit);
-      }
-    }
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-        return ListTile(title: Text(result));
-      },
-    );
-  }
-}
