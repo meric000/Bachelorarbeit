@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+/**This is a Class for a SWU-Card, it manages to convert a Json file into a StarWarsUnlimitedCard*/
 class StarWarsUnlimitedCard {
   final String cardId;
   final String name;
@@ -42,6 +42,7 @@ class StarWarsUnlimitedCard {
 
   });
 
+  /// Converts a Json object into one StarWarsUnlimitedCard
   factory StarWarsUnlimitedCard.fromJson(Map<String, dynamic> json) {
     // Kombiniere Set und Number zu einer ID
     final id = "${json['Set']}-${json['Number']}";
@@ -65,8 +66,7 @@ class StarWarsUnlimitedCard {
     final aspects =
         (json['Aspects'] as List?)
             ?.map((e) => e.toString())
-            .toList() ??
-            [];
+            .toList() ?? [];
     final traits =
         (json['Traits'] as List?)?.map((e) => e.toString()).toList() ??
             [];
@@ -76,8 +76,6 @@ class StarWarsUnlimitedCard {
       backArt = "${json['BackArt']}";
       backText = "${json['BackText']}";
     }
-
-
 
     return StarWarsUnlimitedCard(
       cardId: id,
@@ -99,5 +97,78 @@ class StarWarsUnlimitedCard {
       backArt: backArt,
       backtext: backText,
     );
+  }
+
+  /**
+   * creates a SWU-card from a Json body and adds them into a list of SWU-Cards
+   */
+  static Future<List<StarWarsUnlimitedCard>> createSWUCardListFromJson(List<dynamic> sCardsList) async {
+
+    List<StarWarsUnlimitedCard> cardList = [];
+
+    for (int i = 0; i < sCardsList.length; i++) {
+      final id = "${sCardsList[i]['Set']} ${sCardsList[i]['Number']}";
+      final name =
+      sCardsList[i]['Subtitle'] != null
+          ? "${sCardsList[i]['Name']} – ${sCardsList[i]['Subtitle']}"
+          : sCardsList[i]['Name'] ?? 'Unbekannte Karte';
+      final imageUrl =
+          sCardsList[i]['FrontArt'] ??
+              'https://via.placeholder.com/300x420?text=No+Image';
+
+      final cost = int.tryParse(sCardsList[i]['Cost'].toString()) ?? 0;
+      final power = int.tryParse(sCardsList[i]['Power'].toString()) ?? 0;
+      final hp = int.tryParse(sCardsList[i]['HP'].toString()) ?? 0;
+      final bool doubleSided = sCardsList[i]['DoubleSided'] as bool;
+      final rarity = "${sCardsList[i]['Rarity']}";
+      final bool unique = sCardsList[i]['Unique'] as bool;
+      final artist = "${sCardsList[i]['Artist']}";
+      final variantType = "${sCardsList[i]['VariantType']}";
+      final marketPrice =
+          double.tryParse(sCardsList[i]['MarketPrice'].toString()) ?? 0.0;
+      final foilPrice =
+          double.tryParse(sCardsList[i]['FoilPrice'].toString()) ?? 0.0;
+      final arena = "${sCardsList[i]['Arenas']}";
+      final type = "${sCardsList[i]['Type']}";
+      final aspects =
+          (sCardsList[i]['Aspects'] as List?)
+              ?.map((e) => e.toString())
+              .toList() ??
+              [];
+      final traits =
+          (sCardsList[i]['Traits'] as List?)?.map((e) => e.toString()).toList() ??
+              [];
+      String backArt = "This Card has no Back";
+      String backText = "";
+      if (doubleSided) {
+        backArt = "${sCardsList[i]['BackArt']}";
+        backText = "${sCardsList[i]['BackText']}";
+      }
+
+      cardList.add(
+        StarWarsUnlimitedCard(
+          cardId: id,
+          name: name,
+          image: imageUrl,
+          cost: cost,
+          power: power,
+          hp: hp,
+          rarity: rarity,
+          unique: unique,
+          artist: artist,
+          variantType: variantType,
+          marktPrice: marketPrice,
+          foilPrice: foilPrice,
+          arena: arena,
+          type: type,
+          aspects: aspects,
+          traits: traits,
+          backArt: backArt,
+          backtext: backText,
+        ),
+      );
+    }
+
+    return cardList;
   }
 }

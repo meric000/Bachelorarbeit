@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'buttonstyle.dart';
-import 'collectionScreen.dart';
-import 'deckBuilderScreen.dart';
-import 'searchScreen.dart';
-import 'DeckStatsScreen.dart';
+import 'Buttonstyle.dart';
+import 'CollectionScreen.dart';
+import 'DeckBuilderScreen.dart';
+import 'SearchScreen.dart';
+import 'DeckInfoScreen.dart';
 
 void main() => runApp(const MyApp());
 
@@ -42,7 +42,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _buildScreens(BuildContext context) {
     return [
       _buildCardScreen(context),
-      SearchScreen(),
+      SearchScreen(searchFromDeckbuildScreen: false,),
       CollectionScreen(),
       DeckBuilderScreen(),
     ];

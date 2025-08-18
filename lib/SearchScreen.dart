@@ -2,9 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'CollectionScreen.dart';
 import 'DBHelper.dart';
 import 'StarwarsUnlimitedCard.dart';
-import 'collectionScreen.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -19,33 +20,38 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Search Screen',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: SearchScreen(),
+      home: SearchScreen(searchFromDeckbuildScreen: false,),
     );
   }
 }
 
 class SearchScreen extends StatefulWidget {
+  final bool searchFromDeckbuildScreen;
+
+  const SearchScreen({
+    super.key,
+    required this.searchFromDeckbuildScreen,
+  });
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  Future<List<StarWarsUnlimitedCard>>? futureCards;
-
-
-  late SearchController _searchController;
 
   @override
   void initState() {
     super.initState();
-    _searchController = SearchController();
+    _searchController = SearchController(); // <-- Initialisierung
   }
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _searchController.dispose(); // <-- Aufräumen nicht vergessen
     super.dispose();
   }
+  Future<List<StarWarsUnlimitedCard>>? futureCards;
+  late SearchController _searchController;
+
 
   @override
   Widget build(BuildContext context) {
@@ -64,12 +70,12 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     onTap: () {},
                     onChanged: (_) {},
+                    //searches the DB for the given String after pressing Enter
                     onSubmitted: (value) async {
                       // Tastatur schließen
                       FocusScope.of(context).unfocus();
                       List<StarWarsUnlimitedCard> CardList = await fetchbyName(
                           value);
-
                       setState(() {
                         futureCards = Future.value(CardList);
                       });
@@ -86,7 +92,8 @@ class _SearchScreenState extends State<SearchScreen> {
                           return Text('Fehler: ${snapshot.error}');
                         } else if (snapshot.hasData) {
                           final cards = snapshot.data!;
-                          return Expanded(child: GridView.builder(
+                          return Expanded(
+                              child: GridView.builder(
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2, // number of items in each row
                               mainAxisSpacing: 9.0, // spacing between rows
@@ -99,24 +106,31 @@ class _SearchScreenState extends State<SearchScreen> {
                             itemBuilder: (context, index) {
                               final swuCard = cards[index];
                               return Column(
-                                children: [GestureDetector(
+                                children: [
+                                  GestureDetector(
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
+                                        ///Showling the Tapped card on the Entire Screen
                                         builder: (context) =>
                                             FullscreenImagePage(
-                                                imageUrl: swuCard.image),
+                                              imageUrl: swuCard.image,
+                                              currentCard: swuCard,
+                                              buildingDeck: widget
+                                                  .searchFromDeckbuildScreen,),
                                       ),
                                     );
                                   },
                                   child: Hero(
+                                    /**cards are shown*/
                                     tag: swuCard.image,
                                     child: Image.network(
                                       swuCard.image, height: 120,
                                     ),
                                   ),
                                 ),
+                                  /**the information from the cards*/
                                   const SizedBox(height: 9),
                                   Text(swuCard.name,
                                       style: const TextStyle(fontSize: 10)),
@@ -134,7 +148,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ],
               );
             },
-
             suggestionsBuilder: (BuildContext context,
                 SearchController controller) {
               final List<String> searchTerms = [];
