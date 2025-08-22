@@ -13,6 +13,7 @@ class ShowCardsInList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    SizedBox(height:15);
     if (userCards.isEmpty) {
       return const Center(
           child: Text("No Cards in Collection, add some if you want"));
@@ -37,7 +38,7 @@ class ShowCardsInList extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) =>
                           FullscreenImagePage(
-                            imageUrl: swuCard.image, currentCard: swuCard, buildingDeck: false,),
+                            imageUrl: swuCard.image,  buildingDeck: false, currentCard: swuCard,),
                     ),
                   );
                 },

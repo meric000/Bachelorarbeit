@@ -63,10 +63,10 @@ class FullscreenImagePage extends StatelessWidget {
   final String imageUrl;
   final StarWarsUnlimitedCard currentCard;
   final bool buildingDeck;
-  final List<StarWarsUnlimitedCard>? builedDeck;
+
 
   const FullscreenImagePage(
-      {super.key, required this.imageUrl, required StarWarsUnlimitedCard this.currentCard, required this.buildingDeck, this.builedDeck});
+      {super.key, required this.imageUrl, required StarWarsUnlimitedCard this.currentCard, required this.buildingDeck});
 
   static const bool isCardinCollection = true;
 
@@ -120,9 +120,7 @@ class FullscreenImagePage extends StatelessWidget {
             ],
             if(buildingDeck)
               ElevatedButton(onPressed: () {
-                builedDeck?.add(currentCard);
-                Navigator.push(context, MaterialPageRoute(builder: (context) =>
-                    DeckBuilderScreen(tempList: builedDeck,)));
+                Navigator.pop(context, currentCard); // Karte zurückgeben
               },
                   child: Text("Add this card to new Deck")),
           ],

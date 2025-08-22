@@ -6,7 +6,8 @@ import 'ShowCardsInList.dart';
 void main() {}
 
 class DeckStatsScreen extends StatelessWidget {
-  const DeckStatsScreen({super.key});
+  final SWUDecks deck;
+  const DeckStatsScreen({super.key, required this.deck});
 
 
   @override
@@ -23,7 +24,7 @@ class DeckStatsScreen extends StatelessWidget {
             children: [
               Expanded(
                   child: ShowCardsInList(
-                      userCards: SWUDecks.dummyDeck.cardsInDeck)),
+                      userCards: deck.cardsInDeck)),
             ],
           ),
         ),

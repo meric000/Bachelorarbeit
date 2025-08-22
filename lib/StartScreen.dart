@@ -3,13 +3,17 @@ import 'package:flutter/material.dart';
 import 'Buttonstyle.dart';
 import 'CollectionScreen.dart';
 import 'DeckBuilderScreen.dart';
-import 'SearchScreen.dart';
 import 'DeckInfoScreen.dart';
+import 'SearchScreen.dart';
+import 'User.dart';
 
 void main() => runApp(const MyApp());
 
 const String deckname = "Deckname Placeholder";
 
+///This is the Startscreen, where The user will get, after he is logged in.
+///The User Decks are Displayed here can be edited from this screen
+///The other Mainscreens(Search- and Collectionscreen) can be accessed from here
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -65,32 +69,49 @@ class _MainScreenState extends State<MainScreen> {
               },
               child: const Text('Add Deck'),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => DeckStatsScreen(),
+          ),Expanded(
+            child: GridView.builder(
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 1, // number of items in each row
+                mainAxisSpacing: 9.0, // spacing between rows
+                childAspectRatio: 3.0,
               ),
-            );},
-            child: Container(
-              color: Colors.grey,
-              width: 380.0,
-              height: 80.0,
-              alignment: Alignment.center,
-              child: Text(deckname,
-                  style: Theme
-                      .of(context)
-                      .textTheme
-                      .headlineMedium!
-                      .copyWith(color: Colors.white)),
-
+              padding: EdgeInsets.all(19.0),
+              itemCount: User.exampleUser.userDecks.length,
+              itemBuilder: (BuildContext context, int index) {
+                final deck = User.exampleUser.userDecks[index];
+                return Hero(
+                  tag: deck,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      padding:
+                          EdgeInsets
+                              .zero, // Damit der Container das Layout bestimmt
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DeckStatsScreen(deck: deck),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      color: Colors.deepPurple,
+                      alignment: Alignment.center,
+                      child: Text(
+                        deck.deckname,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-
-          const Spacer(),
-          const SizedBox(height: 12),
         ],
       ),
     );

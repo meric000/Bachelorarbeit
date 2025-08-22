@@ -9,7 +9,7 @@ import 'package:uuid/uuid.dart';
 class SWUDecks{
   List<StarWarsUnlimitedCard> cardsInDeck=[];
   final String deckname;
-  int decksize = 0;
+  int get decksize => cardsInDeck.length;
   var id = Uuid().v4();
 
   SWUDecks({required this.deckname});

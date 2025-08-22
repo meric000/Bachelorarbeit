@@ -27,11 +27,11 @@ class MyApp extends StatelessWidget {
 
 class SearchScreen extends StatefulWidget {
   final bool searchFromDeckbuildScreen;
-
   const SearchScreen({
     super.key,
     required this.searchFromDeckbuildScreen,
   });
+
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
@@ -68,8 +68,6 @@ class _SearchScreenState extends State<SearchScreen> {
                     padding: const WidgetStatePropertyAll<EdgeInsets>(
                       EdgeInsets.symmetric(horizontal: 16.0),
                     ),
-                    onTap: () {},
-                    onChanged: (_) {},
                     //searches the DB for the given String after pressing Enter
                     onSubmitted: (value) async {
                       // Tastatur schließen
@@ -85,14 +83,17 @@ class _SearchScreenState extends State<SearchScreen> {
                     FutureBuilder<List<StarWarsUnlimitedCard>>(
                       future: futureCards,
                       builder: (context, snapshot) {
+                        ///When the Cards are Being loaded
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const CircularProgressIndicator();
                         } else if (snapshot.hasError) {
                           return Text('Fehler: ${snapshot.error}');
+                          ///When a result is found
                         } else if (snapshot.hasData) {
                           final cards = snapshot.data!;
                           return Expanded(
+                            ///Building a Grid for the Cards to be Displayed
                               child: GridView.builder(
                             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2, // number of items in each row
@@ -108,19 +109,21 @@ class _SearchScreenState extends State<SearchScreen> {
                               return Column(
                                 children: [
                                   GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
+                                  onTap: () async {
+                                    final result = await Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        ///Showling the Tapped card on the Entire Screen
-                                        builder: (context) =>
-                                            FullscreenImagePage(
-                                              imageUrl: swuCard.image,
-                                              currentCard: swuCard,
-                                              buildingDeck: widget
-                                                  .searchFromDeckbuildScreen,),
+                                        builder: (context) => FullscreenImagePage(
+                                          imageUrl: swuCard.image,
+                                          currentCard: swuCard,
+                                          buildingDeck: widget.searchFromDeckbuildScreen,
+                                        ),
                                       ),
                                     );
+
+                                    if (result != null && widget.searchFromDeckbuildScreen) {
+                                      Navigator.pop(context, result); // Ergebnis an A weiterreichen
+                                    }
                                   },
                                   child: Hero(
                                     /**cards are shown*/

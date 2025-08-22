@@ -8,7 +8,7 @@ class User {
   final String password;
   final String eMail;
   List<StarWarsUnlimitedCard> collection = [];
-  List<SWUDecks> userDecks = [SWUDecks.dummyDeck,SWUDecks.dummyDeck];
+  List<SWUDecks> userDecks = [SWUDecks.dummyDeck];
 
    User(this.name, this.password, this.eMail);
 
