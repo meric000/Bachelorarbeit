@@ -39,7 +39,6 @@ class StarWarsUnlimitedCard {
     required this.cardId,
     required this.name,
     required this.image,
-
   });
 
   /// Converts a Json object into one StarWarsUnlimitedCard
@@ -144,7 +143,7 @@ class StarWarsUnlimitedCard {
         backArt = "${sCardsList[i]['BackArt']}";
         backText = "${sCardsList[i]['BackText']}";
       }
-
+      ///Adds the details of the Card to make the StarWarsUnlimitedCard
       cardList.add(
         StarWarsUnlimitedCard(
           cardId: id,
@@ -168,7 +167,6 @@ class StarWarsUnlimitedCard {
         ),
       );
     }
-
     return cardList;
   }
 }

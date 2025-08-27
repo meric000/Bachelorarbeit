@@ -8,7 +8,7 @@ import 'StarwarsUnlimitedCard.dart';
  *  This Method fetches all the Card(s) from the swu-DB mathing the given String and puts in a List
  */
 Future<List<StarWarsUnlimitedCard>> fetchbyName(String name) async {
-  final url = 'https://api.swu-db.com/cards/search?q=$name';
+  final url = 'https://api.swu-db.com/cards/search?q=$name''+and+variant%3Aall&display_mode=checklist&variants=all';
   final response = await http.get(Uri.parse(url));
 
   if (response.statusCode != 200) {

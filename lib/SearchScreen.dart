@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:showing_card/AdvancedFilterScreen.dart';
 
 import 'CollectionScreen.dart';
 import 'DBHelper.dart';
@@ -10,6 +11,7 @@ void main() {
   runApp(const MyApp());
 }
 
+///This is the Search Screen from here you can lookup any card either by their name or by their card Id if needed
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -26,6 +28,7 @@ class MyApp extends StatelessWidget {
 }
 
 class SearchScreen extends StatefulWidget {
+  ///This boolean is for checking from where the user is coming from, depenting on the Previous screen the cards in the Search Screen are customized
   final bool searchFromDeckbuildScreen;
   const SearchScreen({
     super.key,
@@ -41,14 +44,15 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    _searchController = SearchController(); // <-- Initialisierung
+    _searchController = SearchController();
   }
 
   @override
   void dispose() {
-    _searchController.dispose(); // <-- Aufräumen nicht vergessen
+    _searchController.dispose();
     super.dispose();
   }
+
   Future<List<StarWarsUnlimitedCard>>? futureCards;
   late SearchController _searchController;
 
@@ -78,6 +82,21 @@ class _SearchScreenState extends State<SearchScreen> {
                         futureCards = Future.value(CardList);
                       });
                     },
+                      trailing: <Widget>[
+                        Tooltip(message: "Advanced Filter",
+                          //Todo add advanced Searchscreen
+                          child: IconButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        AdvancedFilterScreen(),),);
+                              },
+                              icon: const Icon(Icons.analytics_outlined)
+                          ),
+                        ),
+                      ]
                   ),
                   if (futureCards != null)
                     FutureBuilder<List<StarWarsUnlimitedCard>>(

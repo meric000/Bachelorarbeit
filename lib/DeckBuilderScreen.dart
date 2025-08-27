@@ -9,6 +9,8 @@ import 'User.dart';
 
 void main() {}
 
+///In this class a new Deck is Created or an existing Deck is edited
+///to create a Deck at least one card needs to be added to the Deck to save it
 class DeckBuilderScreen extends StatefulWidget {
   final SWUDecks tempList;
 
@@ -32,7 +34,7 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
       ),
       backgroundColor: Colors.white, // Hier explizit der weiße Hintergrund
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(10.0),
         child: Column(
           children: [
             SizedBox(height: 10),
@@ -43,10 +45,12 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
                 labelText: 'Enter your Deckname',
               ),
             ),
-            SizedBox(height: 30),
 
+            ///The Currently Selected Cards are here displayed
+            Expanded(
+                child: ShowCardsInList(userCards: widget.tempList.cardsInDeck,fromEditScreen: true, userDeck:widget.tempList ,)),
             Align(
-              alignment: Alignment.topLeft,
+              alignment: Alignment.bottomCenter,
               child: ElevatedButton(
                 style: strechedButtonStyle,
                 onPressed: () async {
@@ -66,34 +70,44 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
                 child: const Text('Add Card'),
               ),
             ),
-
-            ///The Currently Selected Cards are here displayed
-            Expanded(
-                child: ShowCardsInList(userCards: widget.tempList.cardsInDeck)),
             Align(
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
                 style: raisedButtonStyle,
                 onPressed: () {
-                  ///Creates the Card, when at Least one Card is added to the Deck
+                  ///Creates the Deck, when at Least one Card is added to the Deck
                   ///The Deck is either creates by a Custom name or as "Neues Deck"
                   ///Depending if the User entered a Deckname
                   if (widget.tempList.cardsInDeck.isNotEmpty) {
-                    if (myController.text.isEmpty) {
+                    if (myController.text.isEmpty && !User.exampleUser.userDecks.contains(widget.tempList) ) {
                       User.exampleUser.userDecks.add(widget.tempList);
                       Navigator.pop(context);
                     }
+                    if (myController.text.isEmpty && User.exampleUser.userDecks.contains(widget.tempList) ) {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    }
+
+                    ///Deck is created with a Custom name
                     else {
                       SWUDecks finalUserDeck = SWUDecks(
                           deckname: myController.text);
-                      finalUserDeck.cardsInDeck = widget.tempList.cardsInDeck;
+                      ///If-case, so if a exsisting deck is edited there will be only one deck and not 2 identical
+                      if(User.exampleUser.userDecks.contains(widget.tempList)){
+                        finalUserDeck.cardsInDeck = widget.tempList.cardsInDeck;
+                        User.exampleUser.userDecks.add(finalUserDeck);
+                        User.exampleUser.userDecks.remove(widget.tempList);
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      }
+                      else{finalUserDeck.cardsInDeck = widget.tempList.cardsInDeck;
                       User.exampleUser.userDecks.add(finalUserDeck);
                       Navigator.pop(context);
+                      }
+
                     }
                   }
 
-
-                  ///Todo: Neue SWUDECK Liste mit namen aus einer Suchleiste erstellen
                   else {
                     final snackbar = SnackBar(
                       content: const Text(
@@ -111,7 +125,7 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
                 child: const Text('Build Deck'),
               ),
             ),
-
+            SizedBox(height:10),
           ],
         ),
       ),

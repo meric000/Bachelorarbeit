@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:showing_card/Buttonstyle.dart';
+import 'package:showing_card/DeckBuilderScreen.dart';
 import 'package:showing_card/SwUDecks.dart';
 
 import 'ShowCardsInList.dart';
@@ -24,7 +26,12 @@ class DeckStatsScreen extends StatelessWidget {
             children: [
               Expanded(
                   child: ShowCardsInList(
-                      userCards: deck.cardsInDeck)),
+                      userCards: deck.cardsInDeck, fromEditScreen: true, userDeck: deck,)),
+              ElevatedButton( style: strechedButtonStyle,
+                  onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>DeckBuilderScreen(tempList: deck,)));
+              }, child: Text("Edit Deck")),
+              SizedBox(height: 20)
             ],
           ),
         ),

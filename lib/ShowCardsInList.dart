@@ -9,14 +9,17 @@ import 'StarwarsUnlimitedCard.dart';
 class ShowCardsInList extends StatelessWidget {
 
   final List<StarWarsUnlimitedCard> userCards;
-  const ShowCardsInList({super.key, required this.userCards});
+  final bool fromEditScreen;
+  final SWUDecks? userDeck;
+  const ShowCardsInList({super.key, required this.userCards, required this.fromEditScreen, this.userDeck});
+
 
   @override
   Widget build(BuildContext context) {
     SizedBox(height:15);
     if (userCards.isEmpty) {
       return const Center(
-          child: Text("No Cards in Collection, add some if you want"));
+          child: Text("No Cards in Selected, add some if you want"));
     } else if (userCards.isNotEmpty) {
       return Expanded(child: GridView.builder(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -38,7 +41,7 @@ class ShowCardsInList extends StatelessWidget {
                     MaterialPageRoute(
                       builder: (context) =>
                           FullscreenImagePage(
-                            imageUrl: swuCard.image,  buildingDeck: false, currentCard: swuCard,),
+                            imageUrl: swuCard.image,  buildingDeck: fromEditScreen, currentCard: swuCard, currentUserDeck: userDeck),
                     ),
                   );
                 },
