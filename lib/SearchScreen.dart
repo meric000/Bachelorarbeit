@@ -84,15 +84,21 @@ class _SearchScreenState extends State<SearchScreen> {
                     },
                       trailing: <Widget>[
                         Tooltip(message: "Advanced Filter",
-                          //Todo add advanced Searchscreen
                           child: IconButton(
-                              onPressed: () {
-                                Navigator.push(
+                              onPressed: () async {
+                                final result = await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        AdvancedFilterScreen(),),);
+                                    builder: (context) => AdvancedFilterScreen(),
+                                  ),
+                                );
+                                if (result != null && result is List<StarWarsUnlimitedCard>) {
+                                  setState(() {
+                                    futureCards = Future.value(result);
+                                  });
+                                }
                               },
+
                               icon: const Icon(Icons.analytics_outlined)
                           ),
                         ),
@@ -178,6 +184,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   term.toLowerCase().contains(query.toLowerCase())
               ).toList();
 
+              //Anzeigen der Gesuchten Karten
               return List<Widget>.generate(filtered.length, (int index) {
                 final result = filtered[index];
                 return ListTile(

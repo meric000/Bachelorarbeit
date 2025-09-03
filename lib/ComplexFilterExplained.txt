@@ -1,0 +1,70 @@
+Filter URL Properties:
+Base of the search link, if not changed all cards will be shown, all the other filter properties are added to this link
+the "+" are a part of the link need to be added to combine different criteria the normal + is not a part of the link and
+symbolizes, that these are the option that can be added to the previous sting without and space between them
+|
+V
+'https://api.swu-db.com/cards/search?q="
+
+"a" + "<||>" %3D" b||w||r||y||k||g
+(used to select an aspect of a card – aspects can be combined arbitrarily)
+(<,> influence which cards are included in the search: > searches for cards with exactly one of these aspects, < includes cards with some of the chosen aspects or also colorless cards, if omitted it searches for cards with only these aspects)
+
+"+"
+"%28r%3" + "Ac || Au || Ar || Al || As"
+"+%29"
+(filter by card rarity; when searching for multiple rarities they are combined as follows:
+%28r%3Ac+OR+r%3Au+OR+r%3Ar+OR+r%3Al+OR+r%3As+%29 → %28r%ABBREV0+OR+r%3ABBREV1+OR+r%3ABBREV2...)
+
+"+"
+"$name"
+(the name of the card being searched for – partial strings also count as matches.
+Example: with the string "Vader" cards with "InVADERs" will also appear as results)
+
+"+"
+"arena%3A" + "Ground || Space"
+(search for a card that acts either on the ground or in space)
+
+"+"
+"tr%3A" +
+"BOUNTY HUNTER || CAPITAL SHIP || CLONE || CONDITION ||
+ CREATURE || DISASTER || DROID || EWOK ||
+ FIGHTER || FIRST ORDER || FORCE || FRINGE ||
+ GAMBIT || GUNGAN || HUTT || IMPERIAL || INNATE ||
+ INQUISITOR || ITEM || JAWA || JEDI || KAMINOAN || LAW ||
+ LEARNED || LIGHTSABER || MANDALORIAN || MODIFICATION ||
+ NABOO || NEW REPUBLIC || NIGHT || NIHIL || OFFICIAL ||
+ PILOT || PLAN || REBEL || REPUBLIC || RESISTANCE || SEPARATIST ||
+ SITH || SPECTRE || SPEEDER || SUPPLY || TACTIC || TANK || TRANSPORT ||
+ TRICK || TROOPER || TUSKEN || TWI'LEK || UNDEAD || UNDERWORLD || WALKER || WEAPON || WOOKIE"
+(describes which kind of trait the card has. If multiple traits are used, they are combined as
+tr%3ACATEGORY1+tr%3ACATEGORY2... Spaces are replaced with +)
+
+"+"
+"type%3A" + "Base||Event||Leader||Unit||Upgrade"
+(search for the type of the card and its function in the game)
+
+"+"
+"t%3A"+"$searched Text"
+(allows searching for specific texts within a card’s description. Example: searching with the string "Draw" will return all cards that have the word "draw" in their text)
+
+"+"
+"c||p||h" + "%3DNum (=) ||<Num || ||>Num || %21%3DNum (!=)||>%3DNum(>=)||<%3DNum(<=)"
+(filter for card stats. When searching with multiple values, they are combined as follows:
+h%21%3D10+c<10+p>10 → hp!=10, cost<10, power>10)
+
+"+"
+"sort=" + "name || type || arenas || aspects || power || hp || cost || traits || rairty || setnumber || artist"
+(defines how the cards are sorted)
+
+"+"
+"sort_order=" "asc||desc"
+(ascending or descending order)
+
+"+"
+"display_mode=" "images||checklist"
+(defines whether the cards are displayed as a list or with their images → irrelevant for the application since cards are always displayed with images)
+
+"&leader=""
+"&base=""
+(the leaders and bases are given here by set number and set ID. For now, they cannot be selected, but future integration is possible)
