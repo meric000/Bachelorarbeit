@@ -27,7 +27,7 @@ class CollectionScreen extends StatefulWidget {
 
 class _CollectionScreenState extends State<CollectionScreen> {
   ///checks if a Card is in the CollectionList of a User
-  bool checkIfCardIsInCollection(StarWarsUnlimitedCard card, User user) {
+  bool checkIfCardIsInCollection(StarWarsUnlimitedCard card, MyUser user) {
     if (user.collection.contains(card)) {
       return true;
     }
@@ -35,7 +35,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
   }
 
   late Future<StarWarsUnlimitedCard> futureCard;
-  List<StarWarsUnlimitedCard> userCards = User.exampleUser.collection;
+  List<StarWarsUnlimitedCard> userCards = MyUser.exampleUser.collection;
 
 
   @override
@@ -134,17 +134,17 @@ class FullscreenImagePage extends StatelessWidget {
                 onPressed: () async {
                   if (_CollectionScreenState()
                       .checkIfCardIsInCollection(
-                      currentCard, User.exampleUser)) {
-                    User.exampleUser.collection.remove(currentCard);
+                      currentCard, MyUser.exampleUser)) {
+                    MyUser.exampleUser.collection.remove(currentCard);
 
                     ///Todo: Change buttontext on press
                   } else {
-                    User.exampleUser.collection.add(currentCard);
+                    MyUser.exampleUser.collection.add(currentCard);
                   }
                 },
                 child: Text(
                   _CollectionScreenState().checkIfCardIsInCollection(
-                      currentCard, User.exampleUser)
+                      currentCard, MyUser.exampleUser)
                       ? "remove Card from collection"
                       : "add card to collection",
                 ),
@@ -165,14 +165,14 @@ class FullscreenImagePage extends StatelessWidget {
             ],
 
             if(buildingDeck)
-              if(!User.exampleUser.userDecks.contains(currentUserDeck))
+              if(!MyUser.exampleUser.userDecks.contains(currentUserDeck))
                 ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context, currentCard); // Karte zurückgeben
                     },
                     child: Text("Add this card to new Deck")),
 
-            if(User.exampleUser.userDecks.contains(currentUserDeck))
+            if(MyUser.exampleUser.userDecks.contains(currentUserDeck))
               ElevatedButton(
                   onPressed: () {
                     currentUserDeck?.cardsInDeck.remove(currentCard);

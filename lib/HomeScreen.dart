@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:showing_card/LoginScreen.dart';
 
 import 'Buttonstyle.dart';
 import 'CollectionScreen.dart';
@@ -6,26 +7,17 @@ import 'DeckBuilderScreen.dart';
 import 'DeckInfoScreen.dart';
 import 'SearchScreen.dart';
 import 'User.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() => runApp(const MyApp());
+
 
 const String deckname = "Deckname Placeholder";
 
 ///This is the Startscreen, where The user will get, after he is logged in.
 ///The User Decks are Displayed here can be edited from this screen
 ///The other Mainscreens(Search- and Collectionscreen) can be accessed from here
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
 
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Karte anzeigen',
-      home: const MainScreen(),
-    );
-  }
-}
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -69,7 +61,8 @@ class _MainScreenState extends State<MainScreen> {
               },
               child: const Text('Add Deck'),
             ),
-          ),Expanded(
+          ),
+          Expanded(
             child: GridView.builder(
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 1, // number of items in each row
@@ -77,9 +70,9 @@ class _MainScreenState extends State<MainScreen> {
                 childAspectRatio: 3.0,
               ),
               padding: EdgeInsets.all(19.0),
-              itemCount: User.exampleUser.userDecks.length,
+              itemCount: MyUser.exampleUser.userDecks.length,
               itemBuilder: (BuildContext context, int index) {
-                final deck = User.exampleUser.userDecks[index];
+                final deck = MyUser.exampleUser.userDecks[index];
                 return Hero(
                   tag: deck,
                   child: ElevatedButton(
@@ -122,6 +115,7 @@ class _MainScreenState extends State<MainScreen> {
     final screens = _buildScreens(context);
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('SWU Cardfinder Pro Delux ++'),
         backgroundColor: Colors.redAccent,
       ),

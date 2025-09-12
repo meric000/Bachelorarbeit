@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "668651577484",
+    "project_id": "swudeckbuilderdb",
+    "storage_bucket": "swudeckbuilderdb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:668651577484:android:10c37f04d9224f1067dba9",
+        "android_client_info": {
+          "package_name": "com.example.showing_card"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyADw6-TzxoUKu-MJTW-PEM0PIgW0u3wVmA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

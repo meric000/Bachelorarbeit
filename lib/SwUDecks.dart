@@ -14,7 +14,7 @@ class SWUDecks{
 
   SWUDecks({required this.deckname});
 
-  buildTitle(BuildContext context, User currUser, int index) {
+  buildTitle(BuildContext context, MyUser currUser, int index) {
     return Text(
       currUser.userDecks[index].deckname,
       style: Theme
@@ -23,6 +23,29 @@ class SWUDecks{
           .headlineSmall,
     );
   }
+
+  /// Baut eine Map für Firestore
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'deckname': deckname,
+      'cardsInDeck': cardsInDeck.map((c) => c.toMap()).toList(),
+    };
+  }
+
+  /// Baut aus Firestore-Daten wieder ein Deck
+  factory SWUDecks.fromMap(Map<String, dynamic> map) {
+    final deck = SWUDecks(deckname: map['deckname'] ?? '');
+    deck.cardsInDeck = (map['cardsInDeck'] as List? ?? [])
+        .map((c) => StarWarsUnlimitedCard.fromMap(c))
+        .toList();
+    // ID setzen, falls vorhanden
+    if (map['id'] != null) {
+      deck.id = map['id'];
+    }
+    return deck;
+  }
+
 
   buildSubtitle(BuildContext context) => const SizedBox.shrink();
 

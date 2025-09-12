@@ -169,4 +169,50 @@ class StarWarsUnlimitedCard {
     }
     return cardList;
   }
+  ///Saves the Card(s) to Firebase
+  Map<String, dynamic> toMap() {
+    return {
+      'cardId': cardId,
+      'name': name,
+      'image': image,
+      'arena': arena,
+      'type': type,
+      'aspects': aspects,
+      'traits': traits,
+      'cost': cost,
+      'power': power,
+      'hp': hp,
+      'backArt': backArt,
+      'backtext': backtext,
+      'rarity': rarity,
+      'unique': unique,
+      'artist': artist,
+      'variantType': variantType,
+      'marktPrice': marktPrice,
+      'foilPrice': foilPrice,
+    };
+  }
+  ///Gets the Card(s) from Firebase
+  factory StarWarsUnlimitedCard.fromMap(Map<String, dynamic> map) {
+    return StarWarsUnlimitedCard(
+      cardId: map['cardId'] ?? '',
+      name: map['name'] ?? '',
+      image: map['image'] ?? '',
+      arena: map['arena'] ?? '',
+      type: map['type'] ?? '',
+      aspects: List<String>.from(map['aspects'] ?? []),
+      traits: List<String>.from(map['traits'] ?? []),
+      cost: map['cost'] ?? 0,
+      power: map['power'] ?? 0,
+      hp: map['hp'] ?? 0,
+      backArt: map['backArt'] ?? '',
+      backtext: map['backtext'] ?? '',
+      rarity: map['rarity'] ?? '',
+      unique: map['unique'] ?? false,
+      artist: map['artist'] ?? '',
+      variantType: map['variantType'] ?? '',
+      marktPrice: (map['marktPrice'] ?? 0).toDouble(),
+      foilPrice: (map['foilPrice'] ?? 0).toDouble(),
+    );
+  }
 }

@@ -79,11 +79,11 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
                   ///The Deck is either creates by a Custom name or as "Neues Deck"
                   ///Depending if the User entered a Deckname
                   if (widget.tempList.cardsInDeck.isNotEmpty) {
-                    if (myController.text.isEmpty && !User.exampleUser.userDecks.contains(widget.tempList) ) {
-                      User.exampleUser.userDecks.add(widget.tempList);
+                    if (myController.text.isEmpty && !MyUser.exampleUser.userDecks.contains(widget.tempList) ) {
+                      MyUser.exampleUser.userDecks.add(widget.tempList);
                       Navigator.pop(context);
                     }
-                    if (myController.text.isEmpty && User.exampleUser.userDecks.contains(widget.tempList) ) {
+                    if (myController.text.isEmpty && MyUser.exampleUser.userDecks.contains(widget.tempList) ) {
                       Navigator.pop(context);
                       Navigator.pop(context);
                     }
@@ -93,15 +93,15 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
                       SWUDecks finalUserDeck = SWUDecks(
                           deckname: myController.text);
                       ///If-case, so if a exsisting deck is edited there will be only one deck and not 2 identical
-                      if(User.exampleUser.userDecks.contains(widget.tempList)){
+                      if(MyUser.exampleUser.userDecks.contains(widget.tempList)){
                         finalUserDeck.cardsInDeck = widget.tempList.cardsInDeck;
-                        User.exampleUser.userDecks.add(finalUserDeck);
-                        User.exampleUser.userDecks.remove(widget.tempList);
+                        MyUser.exampleUser.userDecks.add(finalUserDeck);
+                        MyUser.exampleUser.userDecks.remove(widget.tempList);
                         Navigator.pop(context);
                         Navigator.pop(context);
                       }
                       else{finalUserDeck.cardsInDeck = widget.tempList.cardsInDeck;
-                      User.exampleUser.userDecks.add(finalUserDeck);
+                      MyUser.exampleUser.userDecks.add(finalUserDeck);
                       Navigator.pop(context);
                       }
 
@@ -141,7 +141,7 @@ class ChooseDeckPage extends StatelessWidget {
 
    final StarWarsUnlimitedCard currentcard;
 
-  List<SWUDecks> userDecks = User.exampleUser.userDecks;
+  List<SWUDecks> userDecks = MyUser.exampleUser.userDecks;
 
   @override
   Widget build(BuildContext context,) {
@@ -164,7 +164,7 @@ class ChooseDeckPage extends StatelessWidget {
                     color: Colors.grey,
                     elevation: 3,
                     child: ListTile(
-                      title: item.buildTitle(context, User.exampleUser, index),
+                      title: item.buildTitle(context, MyUser.exampleUser, index),
                       subtitle: item.buildSubtitle(context),
                       onTap: () {userDecks[index].cardsInDeck.add(currentcard);}
                     ),
