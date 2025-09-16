@@ -1,8 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:showing_card/HomeScreen.dart';
+
 import 'Buttonstyle.dart';
+import 'DeckUser.dart';
+import 'StarwarsUnlimitedCard.dart';
+import 'SwUDecks.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -38,11 +43,29 @@ Future<User?> registerWithEmail(String email, String password) async {
   try {
     final credential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
-    return credential.user;
+    final fbUser = credential.user;
+
+    if (fbUser != null) {
+      await saveUserData(fbUser);
+    }
+
+    return fbUser;
   } on FirebaseAuthException catch (e) {
     print('Fehler bei Registrierung: ${e.message}');
     return null;
   }
+}
+
+Future<void> saveUserData(User fbUser) async {
+  await FirebaseFirestore.instance
+      .collection('users')
+      .doc(fbUser.uid)
+      .set({
+    'name': fbUser.displayName ?? "Unbekannt",
+    'email': fbUser.email ?? "",
+  ///  'collection': [],   // leere Liste für Karten
+  ///  'userDecks': [],    // leere Liste für Decks
+  });
 }
 
 // Login
@@ -52,12 +75,73 @@ Future<User?> loginWithEmail(String email, String password) async {
       email: email,
       password: password,
     );
-    return credential.user;
+    final fbUser = credential.user;
+    if (fbUser != null) {
+      try {
+        /// await loadUserData(fbUser);
+        ///final doc = await FirebaseFirestore.instance
+        ///    .collection('users')
+        ///    .doc(fbUser.uid)
+        ///    .get();
+
+        MyUser.currentUser = await MyUser.loadUser(fbUser.uid);
+        print("User-Daten geladen: ${MyUser.currentUser.name}");
+        print("Decks: ${MyUser.currentUser.userDecks.length}");
+        print("Collection: ${MyUser.currentUser.collection.length}");
+        print(MyUser.currentUser.userDecks);
+        ///if (doc.exists) {}
+      } catch (e) {
+        print("Fehler beim Laden der User-Daten: $e");
+      }
+    }
+
+    return fbUser;
   } on FirebaseAuthException catch (e) {
     print('Fehler bei Login: ${e.message}');
     return null;
+  } catch (e) {
+    print("Unbekannter Fehler bei Login: $e");
+    return null;
   }
 }
+Future<void> loadUserData(User fbUser) async {
+  try {
+    final doc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(fbUser.uid)
+        .get();
+
+    if (!doc.exists) {
+      print("️Keine User-Daten in Firestore gefunden, lege neues Dokument an...");
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(fbUser.uid)
+          .set({
+        'name': fbUser.displayName ?? "Unbekannt",
+        'email': fbUser.email ?? "",
+        'collection': [],
+        'userDecks': [],
+      });
+      return;
+    }
+
+    final data = doc.data();
+    if (data == null) {
+      print("️Firestore-Dokument ist leer.");
+      return;
+    }
+
+    // Map -> MyUser
+    MyUser.currentUser = MyUser.fromMap(data);
+    print("User-Daten erfolgreich geladen: ${MyUser.currentUser.name}");
+
+  } on FirebaseException catch (e) {
+    print("Firebase-Fehler beim Laden der User-Daten: ${e.message}");
+  } catch (e) {
+    print("Unbekannter Fehler beim Laden der User-Daten: $e");
+  }
+}
+
 
 // Logout
 Future<void> logout() async {
@@ -80,7 +164,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      appBar: AppBar(
+        ///removes backbutton from appbar
+          automaticallyImplyLeading: false, title: const Text("Login")),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -150,7 +236,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      appBar: AppBar(title: const Text("Create new Account")),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(

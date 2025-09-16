@@ -1,15 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:showing_card/LoginScreen.dart';
-
 import 'Buttonstyle.dart';
 import 'CollectionScreen.dart';
 import 'DeckBuilderScreen.dart';
 import 'DeckInfoScreen.dart';
 import 'SearchScreen.dart';
-import 'User.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-
+import 'DeckUser.dart';
 
 
 const String deckname = "Deckname Placeholder";
@@ -17,6 +14,17 @@ const String deckname = "Deckname Placeholder";
 ///This is the Startscreen, where The user will get, after he is logged in.
 ///The User Decks are Displayed here can be edited from this screen
 ///The other Mainscreens(Search- and Collectionscreen) can be accessed from here
+
+Future<void> logout() async {
+  try {
+    await FirebaseAuth.instance.signOut();
+    print("Logout erfolgreich");
+  } catch (e) {
+    print("Fehler beim Logout: $e");
+  }
+}
+
+
 
 
 class MainScreen extends StatefulWidget {
@@ -70,9 +78,9 @@ class _MainScreenState extends State<MainScreen> {
                 childAspectRatio: 3.0,
               ),
               padding: EdgeInsets.all(19.0),
-              itemCount: MyUser.exampleUser.userDecks.length,
+              itemCount: MyUser.currentUser.userDecks.length,
               itemBuilder: (BuildContext context, int index) {
-                final deck = MyUser.exampleUser.userDecks[index];
+                final deck = MyUser.currentUser.userDecks[index];
                 return Hero(
                   tag: deck,
                   child: ElevatedButton(
@@ -116,8 +124,21 @@ class _MainScreenState extends State<MainScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text('SWU Cardfinder Pro Delux ++'),
+        title: const Text('SWU Deckbuilder'),
         backgroundColor: Colors.redAccent,
+        actions: [
+          Text(MyUser.currentUser.eMail),
+          ElevatedButton(
+            style: logoutButtonStyle,
+          onPressed: () async {
+            await logout();
+            // Danach evtl. Navigation zurück zur Login-Seite
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => LoginScreen()));
+          },
+          child: Text("Logout"),
+        )],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

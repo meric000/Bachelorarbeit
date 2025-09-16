@@ -1,8 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:showing_card/StarwarsUnlimitedCard.dart';
-import 'package:showing_card/User.dart';
+import 'package:showing_card/DeckUser.dart';
 import 'package:uuid/uuid.dart';
 
 
@@ -39,12 +41,21 @@ class SWUDecks{
     deck.cardsInDeck = (map['cardsInDeck'] as List? ?? [])
         .map((c) => StarWarsUnlimitedCard.fromMap(c))
         .toList();
-    // ID setzen, falls vorhanden
     if (map['id'] != null) {
       deck.id = map['id'];
     }
     return deck;
   }
+
+  Future<void> saveDeck(User fbUser, SWUDecks deck) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(fbUser.uid)
+        .collection('decks')
+        .doc(deck.id)
+        .set(deck.toMap());
+  }
+
 
 
   buildSubtitle(BuildContext context) => const SizedBox.shrink();

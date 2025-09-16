@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:showing_card/DeckBuilderScreen.dart';
 import 'package:showing_card/ShowCardsInList.dart';
@@ -5,7 +7,7 @@ import 'package:showing_card/SwUDecks.dart';
 
 import 'DBHelper.dart';
 import 'StarwarsUnlimitedCard.dart';
-import 'User.dart';
+import 'DeckUser.dart';
 
 
 
@@ -35,7 +37,7 @@ class _CollectionScreenState extends State<CollectionScreen> {
   }
 
   late Future<StarWarsUnlimitedCard> futureCard;
-  List<StarWarsUnlimitedCard> userCards = MyUser.exampleUser.collection;
+  List<StarWarsUnlimitedCard> userCards = MyUser.currentUser.collection;
 
 
   @override
@@ -95,6 +97,7 @@ class FullscreenImagePage extends StatelessWidget {
       "Market Price": "${currentCard.marktPrice}€",
       "Foil Price": "${currentCard.foilPrice}€",
     };
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: GestureDetector(
@@ -132,19 +135,29 @@ class FullscreenImagePage extends StatelessWidget {
             if (!buildingDeck) ...[
               ElevatedButton(
                 onPressed: () async {
+                  final fbUser = FirebaseAuth.instance.currentUser;
+
+                  if (fbUser == null) return;
+
+                  final colRef = FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(fbUser.uid)
+                      .collection('collection');
+
+
                   if (_CollectionScreenState()
                       .checkIfCardIsInCollection(
-                      currentCard, MyUser.exampleUser)) {
-                    MyUser.exampleUser.collection.remove(currentCard);
-
-                    ///Todo: Change buttontext on press
+                      currentCard, MyUser.currentUser)) {
+                    MyUser.currentUser.collection.remove(currentCard);
+                    await colRef.doc(currentCard.cardId).delete();
                   } else {
-                    MyUser.exampleUser.collection.add(currentCard);
+                    MyUser.currentUser.collection.add(currentCard);
+                    await colRef.doc(currentCard.cardId).set(currentCard.toMap());
                   }
                 },
                 child: Text(
                   _CollectionScreenState().checkIfCardIsInCollection(
-                      currentCard, MyUser.exampleUser)
+                      currentCard, MyUser.currentUser)
                       ? "remove Card from collection"
                       : "add card to collection",
                 ),
@@ -165,14 +178,14 @@ class FullscreenImagePage extends StatelessWidget {
             ],
 
             if(buildingDeck)
-              if(!MyUser.exampleUser.userDecks.contains(currentUserDeck))
+              if(!MyUser.currentUser.userDecks.contains(currentUserDeck))
                 ElevatedButton(
                     onPressed: () {
                       Navigator.pop(context, currentCard); // Karte zurückgeben
                     },
                     child: Text("Add this card to new Deck")),
 
-            if(MyUser.exampleUser.userDecks.contains(currentUserDeck))
+            if(MyUser.currentUser.userDecks.contains(currentUserDeck))
               ElevatedButton(
                   onPressed: () {
                     currentUserDeck?.cardsInDeck.remove(currentCard);

@@ -1,4 +1,6 @@
-import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:showing_card/DeckUser.dart';
 /**This is a Class for a SWU-Card, it manages to convert a Json file into a StarWarsUnlimitedCard*/
 class StarWarsUnlimitedCard {
   final String cardId;
@@ -169,6 +171,7 @@ class StarWarsUnlimitedCard {
     }
     return cardList;
   }
+
   ///Saves the Card(s) to Firebase
   Map<String, dynamic> toMap() {
     return {
@@ -192,6 +195,10 @@ class StarWarsUnlimitedCard {
       'foilPrice': foilPrice,
     };
   }
+
+
+
+
   ///Gets the Card(s) from Firebase
   factory StarWarsUnlimitedCard.fromMap(Map<String, dynamic> map) {
     return StarWarsUnlimitedCard(
@@ -215,4 +222,55 @@ class StarWarsUnlimitedCard {
       foilPrice: (map['foilPrice'] ?? 0).toDouble(),
     );
   }
+
+
+  Future<void> saveCard(User fbUser, StarWarsUnlimitedCard card) async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(fbUser.uid)
+        .collection('collection')
+        .doc(card.cardId)
+        .set(card.toMap());
+  }
+
+  List<Map<String, dynamic>> cardsToMapList(List<StarWarsUnlimitedCard> cards) {
+    return cards.map((c) => c.toMap()).toList();
+  }
+
+  List<StarWarsUnlimitedCard> cardsFromMapList(List<dynamic>? mapList) {
+    if (mapList == null) return [];
+    return mapList
+        .map((c) => StarWarsUnlimitedCard.fromMap(Map<String, dynamic>.from(c)))
+        .toList();
+  }
+
+   Future<void> saveCardList(User fbUser, List<StarWarsUnlimitedCard> cards) async {
+    final batch = FirebaseFirestore.instance.batch();
+    final colRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(fbUser.uid)
+        .collection('collection');
+
+    for (var card in cards) {
+      final docRef = colRef.doc(card.cardId);
+      batch.set(docRef, card.toMap());
+    }
+
+    await batch.commit();
+  }
+
+  /// Lädt eine Kartenliste wieder aus Firestore
+  Future<List<StarWarsUnlimitedCard>> loadCardList(User fbUser) async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(fbUser.uid)
+        .collection('collection')
+        .get();
+
+    return snapshot.docs
+        .map((doc) => StarWarsUnlimitedCard.fromMap(doc.data()))
+        .toList();
+  }
+
+
 }

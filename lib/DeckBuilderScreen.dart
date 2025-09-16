@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:showing_card/SearchScreen.dart';
 import 'package:showing_card/ShowCardsInList.dart';
@@ -5,7 +6,7 @@ import 'package:showing_card/StarwarsUnlimitedCard.dart';
 
 import 'Buttonstyle.dart';
 import 'SwUDecks.dart';
-import 'User.dart';
+import 'DeckUser.dart';
 
 void main() {}
 
@@ -74,17 +75,23 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
               alignment: Alignment.bottomCenter,
               child: ElevatedButton(
                 style: raisedButtonStyle,
-                onPressed: () {
+                onPressed: () async {
                   ///Creates the Deck, when at Least one Card is added to the Deck
                   ///The Deck is either creates by a Custom name or as "Neues Deck"
                   ///Depending if the User entered a Deckname
                   if (widget.tempList.cardsInDeck.isNotEmpty) {
-                    if (myController.text.isEmpty && !MyUser.exampleUser.userDecks.contains(widget.tempList) ) {
-                      MyUser.exampleUser.userDecks.add(widget.tempList);
+                    final fbUser = FirebaseAuth.instance.currentUser;
+
+                    if (fbUser == null) return;
+
+                    if (myController.text.isEmpty && !MyUser.currentUser.userDecks.contains(widget.tempList) ) {
+                      MyUser.currentUser.userDecks.add(widget.tempList);
+                      await widget.tempList.saveDeck(fbUser,widget.tempList);
                       Navigator.pop(context);
                     }
-                    if (myController.text.isEmpty && MyUser.exampleUser.userDecks.contains(widget.tempList) ) {
-                      Navigator.pop(context);
+                    ///Ein extierendes deck bekommt keine namesänderung und wird aktualiesiert
+                    if (myController.text.isEmpty && MyUser.currentUser.userDecks.contains(widget.tempList) ) {
+                      await widget.tempList.saveDeck(fbUser,widget.tempList);
                       Navigator.pop(context);
                     }
 
@@ -93,15 +100,16 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
                       SWUDecks finalUserDeck = SWUDecks(
                           deckname: myController.text);
                       ///If-case, so if a exsisting deck is edited there will be only one deck and not 2 identical
-                      if(MyUser.exampleUser.userDecks.contains(widget.tempList)){
+                      if(MyUser.currentUser.userDecks.contains(widget.tempList)){
                         finalUserDeck.cardsInDeck = widget.tempList.cardsInDeck;
-                        MyUser.exampleUser.userDecks.add(finalUserDeck);
-                        MyUser.exampleUser.userDecks.remove(widget.tempList);
-                        Navigator.pop(context);
+                        MyUser.currentUser.userDecks.add(finalUserDeck);
+                        MyUser.currentUser.userDecks.remove(widget.tempList);
+                        await finalUserDeck.saveDeck(fbUser,finalUserDeck);
                         Navigator.pop(context);
                       }
                       else{finalUserDeck.cardsInDeck = widget.tempList.cardsInDeck;
-                      MyUser.exampleUser.userDecks.add(finalUserDeck);
+                      MyUser.currentUser.userDecks.add(finalUserDeck);
+                      await finalUserDeck.saveDeck(fbUser,finalUserDeck);
                       Navigator.pop(context);
                       }
 
@@ -141,7 +149,7 @@ class ChooseDeckPage extends StatelessWidget {
 
    final StarWarsUnlimitedCard currentcard;
 
-  List<SWUDecks> userDecks = MyUser.exampleUser.userDecks;
+  List<SWUDecks> userDecks = MyUser.currentUser.userDecks;
 
   @override
   Widget build(BuildContext context,) {
@@ -164,9 +172,15 @@ class ChooseDeckPage extends StatelessWidget {
                     color: Colors.grey,
                     elevation: 3,
                     child: ListTile(
-                      title: item.buildTitle(context, MyUser.exampleUser, index),
+                      title: item.buildTitle(context, MyUser.currentUser, index),
                       subtitle: item.buildSubtitle(context),
-                      onTap: () {userDecks[index].cardsInDeck.add(currentcard);}
+                      onTap: () async {
+                        userDecks[index].cardsInDeck.add(currentcard);
+                      final fbUser = FirebaseAuth.instance.currentUser;
+                      if (fbUser != null) {
+                        await userDecks[index].saveDeck(fbUser,userDecks[index]);
+                      }
+                      }
                     ),
                   );
                 },
