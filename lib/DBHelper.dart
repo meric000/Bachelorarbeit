@@ -27,7 +27,6 @@ Future<List<StarWarsUnlimitedCard>> fetchbyName(String name) async {
 }
 
 //The filter is further explained in the ComplexFilterExplained.txt
-//Todo finish ts
 Future<List<StarWarsUnlimitedCard>?> fetchbyComplexFilter(String? aspects,
     String? aspectCondition, String? rarity, String? name,
     String? arena, String? category, String? type, String? text, String? stats,
@@ -88,8 +87,6 @@ Future<List<StarWarsUnlimitedCard>?> fetchbyComplexFilter(String? aspects,
   } else {
     throw Exception('Unerwartetes JSON-Format');
   }
-
-
 }
 
 Future<List<StarWarsUnlimitedCard>?> fetchbyComplexerFilter(
