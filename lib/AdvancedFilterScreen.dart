@@ -654,10 +654,7 @@ class _AdvancedFilterState extends State<AdvancedFilterScreen> {
               SizedBox(height: 25)
             ],
           ),
-
           )
-
-
       ),
     );
   }

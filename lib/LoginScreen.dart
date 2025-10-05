@@ -11,10 +11,7 @@ import 'SwUDecks.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  // Flutter Widgets initialisieren
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Firebase initialisieren
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -63,8 +60,6 @@ Future<void> saveUserData(User fbUser) async {
       .set({
     'name': fbUser.displayName ?? "Unbekannt",
     'email': fbUser.email ?? "",
-  ///  'collection': [],   // leere Liste für Karten
-  ///  'userDecks': [],    // leere Liste für Decks
   });
 }
 
@@ -78,11 +73,6 @@ Future<User?> loginWithEmail(String email, String password) async {
     final fbUser = credential.user;
     if (fbUser != null) {
       try {
-        /// await loadUserData(fbUser);
-        ///final doc = await FirebaseFirestore.instance
-        ///    .collection('users')
-        ///    .doc(fbUser.uid)
-        ///    .get();
 
         MyUser.currentUser = await MyUser.loadUser(fbUser.uid);
         print("User-Daten geladen: ${MyUser.currentUser.name}");

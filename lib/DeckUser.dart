@@ -54,7 +54,6 @@ class MyUser {
       user.userDecks =
           deckSnapshots.docs.map((doc) => SWUDecks.fromMap(doc.data())).toList();
     } else {
-      // Fallback: Decks aus User-Dokument
       final data = userDoc.data();
       if (data != null && data['userDecks'] != null) {
         user.userDecks = (data['userDecks'] as List)
@@ -93,8 +92,7 @@ class MyUser {
     return {
       'name': name,
       'eMail': eMail,
-      ///'collection': collection.map((c) => c.toMap()).toList(),
-      ///'userDecks': userDecks.map((d) => d.toMap()).toList(),
+
     };
   }
 
@@ -102,12 +100,6 @@ class MyUser {
     return MyUser(
       name: map['name'] ?? '',
       eMail: map['eMail'] ?? '',
-      /// collection: (map['collection'] as List)
-        ///  .map((c) => StarWarsUnlimitedCard.fromMap(c))
-      /// .toList(),
-        /// userDecks: (map['userDecks'] as List)
-        ///    .map((d) => SWUDecks.fromMap(d))
-      ///   .toList(),
     );
   }
 

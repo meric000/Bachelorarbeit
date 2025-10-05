@@ -1,8 +1,6 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:showing_card/AdvancedFilterScreen.dart';
-
 import 'CollectionScreen.dart';
 import 'DBHelper.dart';
 import 'StarwarsUnlimitedCard.dart';
@@ -98,7 +96,6 @@ class _SearchScreenState extends State<SearchScreen> {
                                   });
                                 }
                               },
-
                               icon: const Icon(Icons.analytics_outlined)
                           ),
                         ),
@@ -184,7 +181,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   term.toLowerCase().contains(query.toLowerCase())
               ).toList();
 
-              //Anzeigen der Gesuchten Karten
               return List<Widget>.generate(filtered.length, (int index) {
                 final result = filtered[index];
                 return ListTile(
@@ -197,8 +193,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       futureCards = Future.value(
                           card as FutureOr<List<StarWarsUnlimitedCard>>?);
                     });
-                    // setzt den Text und schließt das Suggestion Panel
-                    // Optional: etwas mit result machen
                   },
                 );
               });

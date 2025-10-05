@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
-
 import 'StarwarsUnlimitedCard.dart';
 
 /**
@@ -15,8 +13,7 @@ Future<List<StarWarsUnlimitedCard>> fetchbyName(String name) async {
     throw Exception('Serverfehler: ${response.statusCode}');
   }
   final decoded = jsonDecode(response.body);
-
-  // Zugriff auf die Kartenliste im "data"-Feld
+  // Access the card list in the "data" field
   if (decoded is Map && decoded.containsKey('data')) {
     final List<dynamic> cardsList = decoded['data'];
     print("Gefundene Karten: ${cardsList.length}");
@@ -107,10 +104,10 @@ Future<List<StarWarsUnlimitedCard>?> fetchbyComplexerFilter(
   // Basis-URL
   String urlbase = 'https://api.swu-db.com/cards/search?q=';
 
-  // Aspects mit Condition
+  // Aspects with Condition
   if (aspects != null && aspects.isNotEmpty) {
     if (aspectCondition != null) {
-      urlbase += "a${aspectCondition}%3D$aspects+"; // z. B. "a=bw"
+      urlbase += "a${aspectCondition}%3D$aspects+";
     } else {
       urlbase += "a%3D$aspects+";
     }
@@ -118,7 +115,7 @@ Future<List<StarWarsUnlimitedCard>?> fetchbyComplexerFilter(
 
   // Rarity
   if (rarity != null && rarity.isNotEmpty) {
-    urlbase += "%28r%3$rarity+%29+"; // z. B. "%28r%3DAc+%29+"
+    urlbase += "%28r%3$rarity+%29+";
   }
 
   // Name
@@ -151,7 +148,7 @@ Future<List<StarWarsUnlimitedCard>?> fetchbyComplexerFilter(
     urlbase += "$stats$statManipulator$statNum+";
   }
 
-  // Sortierung
+
   if (sortAspect != null && sortAspect.isNotEmpty) urlbase += "+and+variant%3Aall&sort=$sortAspect+";
 
   if (sortOrder != null && sortOrder.isNotEmpty) urlbase += "&sort_order=$sortOrder";

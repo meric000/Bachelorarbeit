@@ -132,7 +132,6 @@ class _MainScreenState extends State<MainScreen> {
             style: logoutButtonStyle,
           onPressed: () async {
             await logout();
-            // Danach evtl. Navigation zurück zur Login-Seite
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => LoginScreen()));

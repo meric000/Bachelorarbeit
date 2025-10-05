@@ -33,7 +33,7 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
       appBar: AppBar(
         title: const Text('Deck Builder'), backgroundColor: Colors.yellow,
       ),
-      backgroundColor: Colors.white, // Hier explizit der weiße Hintergrund
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Column(

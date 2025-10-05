@@ -14,7 +14,7 @@ import 'DeckUser.dart';
 void main() {
   runApp(const MaterialApp(
     title: 'SWU Cardfinder',
-    home: CollectionScreen(), // oder Scaffold mit BottomNav
+    home: CollectionScreen(),
   )
   );
 }
@@ -194,8 +194,6 @@ class FullscreenImagePage extends StatelessWidget {
                   child: Text("Remove this card From the Deck")),
           ],
           ),)
-
-
       ),
     );
   }
