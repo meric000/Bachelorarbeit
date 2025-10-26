@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:showing_card/DeckUser.dart';
 /**This is a Class for a SWU-Card, it manages to convert a Json file into a StarWarsUnlimitedCard*/
 class StarWarsUnlimitedCard {
   final String cardId;

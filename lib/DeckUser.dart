@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:showing_card/SwUDecks.dart';
 import 'StarwarsUnlimitedCard.dart';
 
+///This class is the logged in user, all decks and card are saved to Firebase and loaded when logged in
 class MyUser {
 
   final String name;
@@ -35,8 +36,7 @@ class MyUser {
   }
 
   static Future<MyUser> loadUser(String uid) async {
-    final userDoc =
-    await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    final userDoc = await FirebaseFirestore.instance.collection('users').doc(uid).get();
 
     if (!userDoc.exists) {
       throw Exception("User not found");
@@ -44,6 +44,7 @@ class MyUser {
 
     final user = MyUser.fromFirebaseDoc(uid, userDoc.data()!);
 
+    ///Loads deck from Firebase
     final deckSnapshots = await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
@@ -61,7 +62,7 @@ class MyUser {
             .toList();
       }
     }
-
+    ///loads collection from firebase
     final collectionSnapshots = await FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
@@ -73,7 +74,6 @@ class MyUser {
           .map((doc) => StarWarsUnlimitedCard.fromMap(doc.data()))
           .toList();
     } else {
-      // Fallback: Collection aus User-Dokument
       final data = userDoc.data();
       if (data != null && data['collection'] != null) {
         user.collection = (data['collection'] as List)
@@ -82,8 +82,6 @@ class MyUser {
             .toList();
       }
     }
-
-    return user;
 
     return user;
   }

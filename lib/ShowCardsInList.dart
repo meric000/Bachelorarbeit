@@ -33,6 +33,7 @@ class ShowCardsInList extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           final swuCard = userCards[index];
           return Column(
+            ///a card will be shown in Fullscreen when tapped
             children: [
               GestureDetector(
                 onTap: () {

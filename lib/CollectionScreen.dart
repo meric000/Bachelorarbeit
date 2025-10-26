@@ -112,7 +112,7 @@ class FullscreenImagePage extends StatelessWidget {
                 tag: imageUrl,
                 child: Image.network(imageUrl, fit: BoxFit.contain),
               ),
-
+            //Checks if card has a backside, cards with no Backside have the string "This Card has no Back" as its value
             if(currentCard.backArt.length > 21)...[
               Text("Backart:",
                   style: const TextStyle(color: Colors.white, fontSize: 20)),

@@ -59,7 +59,6 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
                     context,
                     MaterialPageRoute(builder: (context) => SearchScreen(searchFromDeckbuildScreen: true)),
                   );
-
                   ///Add the card to the Temporairy deck
                   if (result != null) {
                     setState(() {
@@ -115,7 +114,7 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
 
                     }
                   }
-
+                  ///a popup will show up, if deck wants to be build properly
                   else {
                     final snackbar = SnackBar(
                       content: const Text(
@@ -141,7 +140,7 @@ class _DeckBuilderState extends State<DeckBuilderScreen> {
   }
 }
 
-///In this calss you can add a Card into a Existing deck
+///In this class you can add a Card into a Existing deck
 ///the Card will be added to that Deck
 class ChooseDeckPage extends StatelessWidget {
 

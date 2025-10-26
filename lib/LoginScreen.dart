@@ -6,8 +6,6 @@ import 'package:showing_card/HomeScreen.dart';
 
 import 'Buttonstyle.dart';
 import 'DeckUser.dart';
-import 'StarwarsUnlimitedCard.dart';
-import 'SwUDecks.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -35,7 +33,7 @@ class MyApp extends StatelessWidget {
 
 
 
-//Register
+
 Future<User?> registerWithEmail(String email, String password) async {
   try {
     final credential = await FirebaseAuth.instance
@@ -63,7 +61,7 @@ Future<void> saveUserData(User fbUser) async {
   });
 }
 
-// Login
+
 Future<User?> loginWithEmail(String email, String password) async {
   try {
     final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(

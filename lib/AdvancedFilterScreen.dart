@@ -30,7 +30,6 @@ String buildAspectString() {
       selectedAspects.add(aspectName[i]);
     }
   }
-  // Kombinieren, z.B. mit || als Trenner
   return selectedAspects.join();
 }
 

@@ -6,12 +6,15 @@ import 'StarwarsUnlimitedCard.dart';
  *  This Method fetches all the Card(s) from the swu-DB mathing the given String and puts in a List
  */
 Future<List<StarWarsUnlimitedCard>> fetchbyName(String name) async {
+  //the cards are fetches by the url and the name is replace by the user input
+  //with the string after the name all variants of a card are shown with different rarities etc.
   final url = 'https://api.swu-db.com/cards/search?q=$name''+and+variant%3Aall&display_mode=checklist&variants=all';
   final response = await http.get(Uri.parse(url));
 
   if (response.statusCode != 200) {
     throw Exception('Serverfehler: ${response.statusCode}');
   }
+  //converts the parsed string into a json object
   final decoded = jsonDecode(response.body);
   // Access the card list in the "data" field
   if (decoded is Map && decoded.containsKey('data')) {
@@ -32,6 +35,7 @@ Future<List<StarWarsUnlimitedCard>?> fetchbyComplexFilter(String? aspects,
 
   String urlbase = 'https://api.swu-db.com/cards/search?q=';
 
+  //the String for the final URL is build here
   if (aspectCondition != null) {
     urlbase += "a${aspectCondition}%3D${aspects!}+";
   }
@@ -76,7 +80,7 @@ Future<List<StarWarsUnlimitedCard>?> fetchbyComplexFilter(String? aspects,
   }
   final decoded = jsonDecode(response.body);
 
-  // Zugriff auf die Kartenliste im "data"-Feld
+
   if (decoded is Map && decoded.containsKey('data')) {
     final List<dynamic> cardsList = decoded['data'];
     print("Gefundene Karten: ${cardsList.length}");
@@ -153,7 +157,7 @@ Future<List<StarWarsUnlimitedCard>?> fetchbyComplexerFilter(
 
   if (sortOrder != null && sortOrder.isNotEmpty) urlbase += "&sort_order=$sortOrder";
 
-  // Feste Parameter
+  // Set Parameter
   urlbase += "display_mode=checklist&variants=all";
 
   print("Fetching URL: $urlbase");

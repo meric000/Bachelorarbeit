@@ -6,7 +6,7 @@ import 'package:showing_card/SwUDecks.dart';
 import 'ShowCardsInList.dart';
 
 void main() {}
-
+///This class is to look at existing deck and the included cards the deck can be edited from here on out
 class DeckStatsScreen extends StatelessWidget {
   final SWUDecks deck;
   const DeckStatsScreen({super.key, required this.deck});

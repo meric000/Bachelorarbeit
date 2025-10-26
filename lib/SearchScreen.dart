@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
 }
 
 class SearchScreen extends StatefulWidget {
-  ///This boolean is for checking from where the user is coming from, depenting on the Previous screen the cards in the Search Screen are customized
+  ///This boolean is for checking from where the user is coming from, depending on the Previous screen the cards in the Search Screen are customized
   final bool searchFromDeckbuildScreen;
   const SearchScreen({
     super.key,
